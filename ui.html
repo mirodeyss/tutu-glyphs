@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutu Glyphs</title>
+  <style>
+    @font-face {
+      font-family: "TutuIcons";
+      src: url("TutuIcons-regular.ttf") format("truetype");
+    }
+
+    :root {
+      --bg: #FFFFFF;
+      --card-bg: #F8F8F8;
+      --border: #b4b4b4;
+      --text: #000000;
+      --text-subtle: #727272;
+      --icon: #000000;
+      --highlight: #715EFE;
+      --radius: 16px;
+    }
+
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: var(--bg);
+      padding: 0px;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 0px;
+      background: linear-gradient(145deg, #f9f9ff, #ffffff);
+    }
+
+    .welcome h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .welcome ul {
+      text-align: left;
+      margin: 0;
+      padding-left: 0;
+      list-style: none;
+      font-size: 14px;
+      color: var(--text-subtle);
+      margin-bottom: 24px;
+    }
+
+    .welcome ul li {
+      margin-bottom: 10px;
+    }
+
+    .welcome a.video-link {
+      color: var(--highlight);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .welcome a.video-link:hover {
+      text-decoration: underline;
+    }
+
+    .welcome button {
+      padding: 10px 20px;
+      font-size: 14px;
+      background-color: var(--highlight);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .welcome button:hover {
+      background-color: #7D71FF;
+    }
+
+    #pluginContent {
+      display: none;
+      padding: 12px;
+    }
+
+
+    h3 {
+      margin-bottom: 12px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .category-label {
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: var(--text-subtle);
+    }
+
+    .input-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    
+    input[type="text"].input.has-value {
+      color: var(--text);
+    }
+    
+    input[type="text"].input {
+      color: var(--text-subtle);
+      width: 100%;
+      height: 40px;
+      padding: 0 36px 0 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background-color: var(--card-bg);
+      font-size: 14px;
+      line-height: 20px;
+      box-sizing: border-box;
+      outline: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+input[type="text"].input:focus {
+  border: 2px solid var(--highlight);
+  color: var(--text);
+}
+
+.clear-button {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--border);
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: none; /* Скрываем по умолчанию */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.15s ease;
+}
+
+
+.clear-button::before {
+  content: '×';
+  display: block;
+  color: white;
+  font-size: 16px;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+      gap: 8px;
+    }
+
+    .icon-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 9px;
+      color: var(--text);
+    }
+
+    .icon-button:hover {
+      /* border: 2px solid var(--highlight); */
+      background-color: #F0F0F0;
+    }
+    .icon-preview {
+      font-family: "TutuIcons";
+      font-size: 18px;
+      margin-bottom: 4px;
+      color: var(--icon);
+    }
+
+    .no-results {
+      text-align: center;
+      color: var(--text-subtle);
+      font-size: 14px;
+      margin-top: 24px;
+    }
+
+  </style>
+</head>
+<body>
+    <div class="welcome" id="welcomeScreen">
+        <h1>Добро пожаловать в Tutu Glyphs</h1>
+        <ul>
+          <li>✨ Быстрый выбор нужной иконки</li>
+          <li>🔍 Поиск по названию</li>
+          <li>📁 Разделение по категориям</li>
+        </ul>
+        <a href="#" target="_blank" class="video-link">▶ Смотреть видео-инструкцию</a>
+        <button onclick="hideWelcome()">Начать работу</button>
+      </div>
+
+      <div id="pluginContent">
+    <h3>Выберите иконку</h3>
+    <div class="input-wrapper">
+        <input
+          type="text"
+          class="input"
+          id="search"
+          placeholder="Поиск иконки..."
+          oninput="toggleClearButton(this); filterIcons()"
+          style="padding-right: 40px;"
+        />
+        <button
+          class="clear-button"
+          onclick="clearInput()"
+          id="clearButton"
+          style="display: none"
+          aria-label="Очистить"
+          type="button"
+        ></button>
+      </div>
+      
+
+  
+    <div class="category-label">Notification & Info</div>
+    <div class="icon-grid" id="group1">
+      <div class="icon-button" data-name="alarm_outline" onclick="insertIcon(this, 'alarm_outline')">
+        <div class="icon-preview">alarm_outline</div>
+        <div class="icon-label">alarm_outline</div>
+      </div>
+      <div class="icon-button" data-name="bell_outline" onclick="insertIcon(this, 'bell_outline')">
+        <div class="icon-preview">bell_outline</div>
+        <div class="icon-label">bell_outline</div>
+      </div>
+      <div class="icon-button" data-name="clock_outline" onclick="insertIcon(this, 'clock_outline')">
+        <div class="icon-preview">clock_outline</div>
+        <div class="icon-label">clock_outline</div>
+      </div>
+      <div class="icon-button" data-name="info-circle_outline" onclick="insertIcon(this, 'info-circle_outline')">
+        <div class="icon-preview">info-circle_outline</div>
+        <div class="icon-label">info-circle_outline</div>
+      </div>
+      <div class="icon-button" data-name="question-mark-circle_outline" onclick="insertIcon(this, 'question-mark-circle_outline')">
+        <div class="icon-preview">question-mark-circle_outline</div>
+        <div class="icon-label">question-mark-circle_outline</div>
+      </div>
+    </div>
+  
+    <div class="category-label">Tools</div>
+  <div class="icon-grid" id="group2">
+    <div class="icon-button" data-name="bookmark_outline" onclick="insertIcon(this, 'bookmark')"><div class="icon-preview">bookmark_outline</div><div class="icon-label">bookmark_outline</div></div>
+    <div class="icon-button" data-name="chain_outline" onclick="insertIcon(this, 'chain')"><div class="icon-preview">chain_outline</div><div class="icon-label">chain_outline</div></div>
+    <div class="icon-button" data-name="paper-clip_outline" onclick="insertIcon(this, 'paper-clip')"><div class="icon-preview">paper-clip_outline</div><div class="icon-label">paper-clip_outline</div></div>
+    <div class="icon-button" data-name="magnifier_outline" onclick="insertIcon(this, 'magnifier')"><div class="icon-preview">magnifier_outline</div><div class="icon-label">magnifier_outline</div></div>
+    <div class="icon-button" data-name="pin_outline" onclick="insertIcon(this, 'pin')"><div class="icon-preview">pin_outline</div><div class="icon-label">pin_outline</div></div>
+    <div class="icon-button" data-name="line-3-horizontal_outline" onclick="insertIcon(this, 'line-3-horizontal')"><div class="icon-preview">line-3-horizontal_outline</div><div class="icon-label">line-3-horizontal_outline</div></div>
+    <div class="icon-button" data-name="square-stack_outline" onclick="insertIcon(this, 'square-stack')"><div class="icon-preview">square-stack_outline</div><div class="icon-label">square-stack_outline</div></div>
+    <div class="icon-button" data-name="heart_outline" onclick="insertIcon(this, 'heart')"><div class="icon-preview">heart_outline</div><div class="icon-label">heart_outline</div></div>
+    <div class="icon-button" data-name="dot-3-horizontal_outline" onclick="insertIcon(this, 'dot-3-horizontal')"><div class="icon-preview">dot-3-horizontal_outline</div><div class="icon-label">dot-3-horizontal_outline</div></div>
+    <div class="icon-button" data-name="dot-3-vertical_outline" onclick="insertIcon(this, 'dot-3-vertical')"><div class="icon-preview">dot-3-vertical_outline</div><div class="icon-label">dot-3-vertical_outline</div></div>
+    <div class="icon-button" data-name="square-arrow-diagonal_outline" onclick="insertIcon(this, 'square-arrow-diagonal')"><div class="icon-preview">square-arrow-diagonal_outline</div><div class="icon-label">square-arrow-diagonal_outline</div></div>
+    <div class="icon-button" data-name="dot-3-connected_outline" onclick="insertIcon(this, 'dot-3-connected')"><div class="icon-preview">dot-3-connected_outline</div><div class="icon-label">dot-3-connected_outline</div></div>
+    <div class="icon-button" data-name="square-arrow-up_outline" onclick="insertIcon(this, 'square-arrow-up')"><div class="icon-preview">square-arrow-up_outline</div><div class="icon-label">square-arrow-up_outline</div></div>
+    <div class="icon-button" data-name="arrow-bold-up-right-bent_outline" onclick="insertIcon(this, 'arrow-bold-up-right-bent')"><div class="icon-preview">arrow-bold-up-right-bent_outline</div><div class="icon-label">arrow-bold-up-right-bent_outline</div></div>
+    <div class="icon-button" data-name="line-3-horizontal-decrease_outline" onclick="insertIcon(this, 'line-3-horizontal-decrease')"><div class="icon-preview">line-3-horizontal-decrease_outline</div><div class="icon-label">line-3-horizontal-decrease_outline</div></div>
+    <div class="icon-button" data-name="line-3-horizontal-increase_outline" onclick="insertIcon(this, 'line-3-horizontal-increase')"><div class="icon-preview">line-3-horizontal-increase_outline</div><div class="icon-label">line-3-horizontal-increase_outline</div></div>
+    <div class="icon-button" data-name="star_outline" onclick="insertIcon(this, 'star')"><div class="icon-preview">star_outline</div><div class="icon-label">star_outline</div></div>
+    <div class="icon-button" data-name="system-window-stack_outline" onclick="insertIcon(this, 'system-window-stack')"><div class="icon-preview">system-window-stack_outline</div><div class="icon-label">system-window-stack_outline</div></div>
+    <div class="icon-button" data-name="thumb-up_outline" onclick="insertIcon(this, 'thumb-up')"><div class="icon-preview">thumb-up_outline</div><div class="icon-label">thumb-up_outline</div></div>
+    <div class="icon-button" data-name="thumb-down_outline" onclick="insertIcon(this, 'thumb-down')"><div class="icon-preview">thumb-down_outline</div><div class="icon-label">thumb-down_outline</div></div>
+    <div class="icon-button" data-name="calendar-clock_outline" onclick="insertIcon(this, 'calendar-clock')"><div class="icon-preview">calendar-clock_outline</div><div class="icon-label">calendar-clock_outline</div></div>
+    <div class="icon-button" data-name="calendar_outline" onclick="insertIcon(this, 'calendar')"><div class="icon-preview">calendar_outline</div><div class="icon-label">calendar_outline</div></div>
+    <div class="icon-button" data-name="slider-1_outline" onclick="insertIcon(this, 'slider-1')"><div class="icon-preview">slider-1_outline</div><div class="icon-label">slider-1_outline</div></div>
+    <div class="icon-button" data-name="slider-3_outline" onclick="insertIcon(this, 'slider-3')"><div class="icon-preview">slider-3_outline</div><div class="icon-label">slider-3_outline</div></div>
+    <div class="icon-button" data-name="docs_outline" onclick="insertIcon(this, 'docs')"><div class="icon-preview">docs_outline</div><div class="icon-label">docs_outline</div></div>
+    <div class="icon-button" data-name="microphone_outline" onclick="insertIcon(this, 'microphone')"><div class="icon-preview">microphone_outline</div><div class="icon-label">microphone_outline</div></div>
+  </div>
+    
+
+  <div class="category-label">Logos</div>
+<div class="icon-grid" id="group-logos">
+  <div class="icon-button" data-name="logo-google-play" onclick="insertIcon(this, 'logo-google-play')">
+    <div class="icon-preview">logo-google-play</div>
+    <div class="icon-label">logo-google-play</div>
+  </div>
+  <div class="icon-button" data-name="logo-google" onclick="insertIcon(this, 'logo-google')">
+    <div class="icon-preview">logo-google</div>
+    <div class="icon-label">logo-google</div>
+  </div>
+  <div class="icon-button" data-name="logo-ru-store" onclick="insertIcon(this, 'logo-ru-store')">
+    <div class="icon-preview">logo-ru-store</div>
+    <div class="icon-label">logo-ru-store</div>
+  </div>
+  <div class="icon-button" data-name="logo-app-gallery" onclick="insertIcon(this, 'logo-app-gallery')">
+    <div class="icon-preview">logo-app-gallery</div>
+    <div class="icon-label">logo-app-gallery</div>
+  </div>
+  <div class="icon-button" data-name="logo-tutu" onclick="insertIcon(this, 'logo-tutu')">
+    <div class="icon-preview">logo-tutu</div>
+    <div class="icon-label">logo-tutu</div>
+  </div>
+  <div class="icon-button" data-name="logo-aeroexpress" onclick="insertIcon(this, 'logo-aeroexpress')">
+    <div class="icon-preview">logo-aeroexpress</div>
+    <div class="icon-label">logo-aeroexpress</div>
+  </div>
+  <div class="icon-button" data-name="logo-metro" onclick="insertIcon(this, 'logo-metro')">
+    <div class="icon-preview">logo-metro</div>
+    <div class="icon-label">logo-metro</div>
+  </div>
+  <div class="icon-button" data-name="logo-vk" onclick="insertIcon(this, 'logo-vk')">
+    <div class="icon-preview">logo-vk</div>
+    <div class="icon-label">logo-vk</div>
+  </div>
+  <div class="icon-button" data-name="logo-telegram" onclick="insertIcon(this, 'logo-telegram')">
+    <div class="icon-preview">logo-telegram</div>
+    <div class="icon-label">logo-telegram</div>
+  </div>
+  <div class="icon-button" data-name="logo-whatsapp" onclick="insertIcon(this, 'logo-whatsapp')">
+    <div class="icon-preview">logo-whatsapp</div>
+    <div class="icon-label">logo-whatsapp</div>
+  </div>
+  <div class="icon-button" data-name="logo-viber" onclick="insertIcon(this, 'logo-viber')">
+    <div class="icon-preview">logo-viber</div>
+    <div class="icon-label">logo-viber</div>
+  </div>
+  <div class="icon-button" data-name="logo-youtube" onclick="insertIcon(this, 'logo-youtube')">
+    <div class="icon-preview">logo-youtube</div>
+    <div class="icon-label">logo-youtube</div>
+  </div>
+  <div class="icon-button" data-name="logo-ok" onclick="insertIcon(this, 'logo-ok')">
+    <div class="icon-preview">logo-ok</div>
+    <div class="icon-label">logo-ok</div>
+  </div>
+  <div class="icon-button" data-name="alfa" onclick="insertIcon(this, 'alfa')">
+    <div class="icon-preview">alfa</div>
+    <div class="icon-label">alfa</div>
+  </div>
+</div>
+
+<div class="category-label">Food</div>
+<div class="icon-grid" id="group-food">
+  <div class="icon-button" data-name="bottle" onclick="insertIcon(this, 'bottle')">
+    <div class="icon-preview">bottle</div>
+    <div class="icon-label">bottle</div>
+  </div>
+  <div class="icon-button" data-name="bottle-glass" onclick="insertIcon(this, 'bottle-glass')">
+    <div class="icon-preview">bottle-glass</div>
+    <div class="icon-label">bottle-glass</div>
+  </div>
+  <div class="icon-button" data-name="fork-bottle" onclick="insertIcon(this, 'fork-bottle')">
+    <div class="icon-preview">fork-bottle</div>
+    <div class="icon-label">fork-bottle</div>
+  </div>
+  <div class="icon-button" data-name="cup-vapor" onclick="insertIcon(this, 'cup-vapor')">
+    <div class="icon-preview">cup-vapor</div>
+    <div class="icon-label">cup-vapor</div>
+  </div>
+  <div class="icon-button" data-name="fork-spoon-crossed" onclick="insertIcon(this, 'fork-spoon-crossed')">
+    <div class="icon-preview">fork-spoon-crossed</div>
+    <div class="icon-label">fork-spoon-crossed</div>
+  </div>
+  <div class="icon-button" data-name="fork-spoon-slash" onclick="insertIcon(this, 'fork-spoon-slash')">
+    <div class="icon-preview">fork-spoon-slash</div>
+    <div class="icon-label">fork-spoon-slash</div>
+  </div>
+  <div class="icon-button" data-name="fork-spoon" onclick="insertIcon(this, 'fork-spoon')">
+    <div class="icon-preview">fork-spoon</div>
+    <div class="icon-label">fork-spoon</div>
+  </div>
+  <div class="icon-button" data-name="spatula-knife" onclick="insertIcon(this, 'spatula-knife')">
+    <div class="icon-preview">spatula-knife</div>
+    <div class="icon-label">spatula-knife</div>
+  </div>
+</div>
+
+<div class="category-label">People</div>
+<div class="icon-grid" id="group-people">
+  <div class="icon-button" data-name="person-circle_outline" onclick="insertIcon(this, 'person-circle_outline')">
+    <div class="icon-preview">person-circle_outline</div>
+    <div class="icon-label">person-circle_outline</div>
+  </div>
+</div>
+
+  <!-- Секция недавно использованных иконок -->
+  <div class="category-label" id="recentLabel" style="display: none;">Недавно использованные</div>
+  <div class="icon-grid" id="recentIcons">
+    <!-- Сюда будут добавляться недавно использованные иконки -->
+  </div>
+
+<div class="category-label">Editing</div>
+<div class="icon-grid" id="editing">
+  <div class="icon-button" data-name="cross_outline" onclick="insertIcon(this, 'cross_outline')">
+    <div class="icon-preview">cross_outline</div>
+    <div class="icon-label">cross_outline</div>
+  </div>
+  <div class="icon-button" data-name="minus_outline" onclick="insertIcon(this, 'minus_outline')">
+    <div class="icon-preview">minus_outline</div>
+    <div class="icon-label">minus_outline</div>
+  </div>
+  <div class="icon-button" data-name="plus_outline" onclick="insertIcon(this, 'plus_outline')">
+    <div class="icon-preview">plus_outline</div>
+    <div class="icon-label">plus_outline</div>
+  </div>
+
+
+
+  <div class="no-results" id="noResults" style="display:none">
+    Ничего не найдено
+  </div>
+      </div>
+  <script>
+    function hideWelcome() {
+      document.getElementById("welcomeScreen").style.display = "none";
+      document.getElementById("pluginContent").style.display = "block";
+      // Инициализация кнопки очистки при первом показе
+      const searchInput = document.getElementById("search");
+      if (searchInput) {
+        toggleClearButton(searchInput);
+      }
+    }
+
+
+    function clearInput() {
+  const input = document.getElementById("search");
+  if (!input) return;
+  
+  input.value = "";
+  input.classList.remove("has-value");
+  input.focus();
+  
+  // Вызываем событие input, чтобы обновить отфильтрованные иконки
+  const event = new Event('input', {
+    bubbles: true,
+    cancelable: true,
+  });
+  input.dispatchEvent(event);
+  
+  // Обновляем видимость кнопки очистки
+  toggleClearButton(input);
+}
+
+
+function toggleClearButton(input) {
+  if (!input) return;
+  
+  const clearBtn = document.getElementById("clearButton");
+  if (!clearBtn) return;
+  
+  // Показываем кнопку только если есть текст И инпут в фокусе
+  if (input.value && input.value.length > 0 && document.activeElement === input) {
+    clearBtn.style.display = "flex";
+  } else {
+    clearBtn.style.display = "none";
+  }
+}
+
+// Добавляем обработчик потери фокуса с инпута
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById("search");
+  const clearBtn = document.getElementById("clearButton");
+  
+  if (searchInput && clearBtn) {
+    // Обработчик потери фокуса
+    searchInput.addEventListener('blur', function() {
+      // Не скрываем сразу, чтобы кнопка оставалась видимой при клике на неё
+      setTimeout(() => {
+        if (document.activeElement !== clearBtn) {
+          clearBtn.style.display = "none";
+        }
+      }, 200);
+    });
+    
+    // Обработчик фокуса
+    searchInput.addEventListener('focus', function() {
+      toggleClearButton(this);
+    });
+    
+    // Обработчик ввода текста
+    searchInput.addEventListener('input', function() {
+      toggleClearButton(this);
+    });
+    
+    // Обработчик клика по кнопке очистки
+    clearBtn.addEventListener('mousedown', function(e) {
+      e.preventDefault(); // Предотвращаем потерю фокуса с инпута
+    });
+    
+    clearBtn.addEventListener('click', function() {
+      clearInput();
+    });
+  }
+});
+
+
+    let currentStyle = 'outline';
+
+    function insertIcon(el, baseName) {
+      document.querySelectorAll('.icon-button').forEach(btn => btn.classList.remove('active'));
+      
+      // Получаем имя иконки
+      let iconName, name;
+      
+      if (el) {
+        iconName = el.getAttribute('data-name');
+        name = iconName.endsWith('_outline') || iconName.endsWith('_filled') 
+          ? iconName 
+          : `${iconName}_${currentStyle}`;
+        el.classList.add('active');
+      } else {
+        iconName = baseName;
+        name = `${baseName}_${currentStyle}`;
+      }
+      
+      // Отправляем сообщение о вставке иконки
+      parent.postMessage({ pluginMessage: { type: 'insert-icon-append', name } }, '*');
+    }
+
+    function filterIcons() {
+      const input = document.getElementById("search").value.toLowerCase();
+      const icons = document.querySelectorAll(".icon-button");
+      let visibleCount = 0;
+
+      icons.forEach(icon => {
+        const name = icon.dataset.name.toLowerCase();
+        const isVisible = name.includes(input);
+        icon.style.display = isVisible ? "flex" : "none";
+        if (isVisible) visibleCount++;
+      });
+
+      document.getElementById("noResults").style.display = visibleCount === 0 ? "block" : "none";
+
+      // скрыть/показать заголовки по категориям
+      document.getElementById("label1").style.display = [...document.getElementById("group1").children].some(el => el.style.display !== "none") ? "block" : "none";
+      document.getElementById("label2").style.display = [...document.getElementById("group2").children].some(el => el.style.display !== "none") ? "block" : "none";
+    }
+
+    function setStyle(style, el) {
+      currentStyle = style;
+      document.querySelectorAll('.segment-option').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+  </body>
+</html>

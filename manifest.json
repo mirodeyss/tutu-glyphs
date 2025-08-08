@@ -1,0 +1,13 @@
+{
+  "name": "Tutu Glyphs",
+  "id": "tutu-icon-inserter",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "reasoning": "No network access required"
+  },
+  "permissions": ["currentuser"]
+}

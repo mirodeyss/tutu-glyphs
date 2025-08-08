@@ -1,0 +1,42 @@
+{
+  "name": "tutu-icon-inserter",
+  "version": "1.0.0",
+  "description": "Figma plugin for inserting Tutu Icons",
+  "main": "dist/code.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "watch": "webpack --watch --mode development",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "figma",
+    "plugin",
+    "icons",
+    "tutu"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/webpack": "^5.28.3",
+    "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.0",
+    "typescript": "^5.1.6",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@figma/plugin-typings": "^1.71.0"
+  },
+  "figma-plugins": {
+    "name": "Tutu Glyphs",
+    "id": "tutu-icon-inserter",
+    "editorType": [
+      "figma"
+    ]
+  }
+}

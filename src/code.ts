@@ -1,93 +1,121 @@
-// Типы сообщений между UI и плагином
-interface PluginMessage {
-  type: 'insert-icon-append';
-  name: string;
+// ===== Types =====
+type UiToPlugin =
+  | { type: 'ui-ready' }
+  | { type: 'insert-icon-append'; name: string }
+  | { type: 'open-url'; url: string };
+
+const ICON_FONT_FAMILY = 'TutuIcons';
+const ICON_REGULAR = 'Regular';
+const ICON_BOLD = 'Bold';
+
+// Окно плагина — строго 400×600
+figma.showUI(__html__, { width: 400, height: 600, themeColors: true });
+
+// ===== Helpers =====
+async function loadIconFont(style: string) {
+  await figma.loadFontAsync({ family: ICON_FONT_FAMILY, style });
 }
 
-// Константы
-const FONT_FAMILY = 'TutuIcons';
-const FONT_STYLE = 'Regular';
+async function loadAllFontsIn(node: TextNode) {
+  if (node.characters.length === 0) return;
+  const fonts = node.getRangeAllFontNames(0, node.characters.length);
+  await Promise.all(fonts.map((f) => figma.loadFontAsync(f)));
+}
 
-// Функция для загрузки шрифтов
-async function loadFonts() {
+// Определяем стиль текста на конце выделенной ноды
+function detectStyleFromTextNode(node: TextNode): string {
   try {
-    await figma.loadFontAsync({ family: FONT_FAMILY, style: FONT_STYLE });
-    console.log('Шрифт успешно загружен');
-  } catch (err) {
-    console.error('Ошибка загрузки шрифта:', err);
-    figma.notify('Не удалось загрузить шрифт. Пожалуйста, убедитесь, что шрифт TutuIcons установлен в системе.');
-  }
+    if (node.characters.length > 0) {
+      const pos = Math.max(0, node.characters.length - 1);
+      const f = node.getRangeFontName(pos, pos + 1);
+      if (f !== figma.mixed) return (f as FontName).style;
+    } else if (node.fontName !== figma.mixed) {
+      return (node.fontName as FontName).style;
+    }
+  } catch {}
+  return ICON_REGULAR;
 }
 
-// Загружаем шрифты при инициализации плагина
-loadFonts();
+// Маппинг «системного» стиля на стиль TutuIcons
+function mapToIconStyle(textStyle: string): string {
+  const map: Record<string, string> = {
+    'Bold': ICON_BOLD,
+    'DemiBold': ICON_BOLD,
+    'SemiBold': ICON_BOLD,
+    'Black': ICON_BOLD,
+    'Heavy': ICON_BOLD,
+    'Medium': ICON_REGULAR,
+    'Regular': ICON_REGULAR,
+    'Normal': ICON_REGULAR,
+    'Light': ICON_REGULAR,
+    'Thin': ICON_REGULAR,
+  };
+  return map[textStyle] ?? ICON_REGULAR;
+}
 
-// Инициализация UI плагина
-figma.showUI(__html__, { width: 300, height: 400 });
+async function createIconText(name: string, style: string) {
+  await loadIconFont(style);
+  const text = figma.createText();
+  text.fontName = { family: ICON_FONT_FAMILY, style };
+  text.characters = name;
 
-// Обработчик сообщений от UI
-figma.ui.onmessage = async (msg: PluginMessage) => {
+  const { center } = figma.viewport;
+  text.x = center.x;
+  text.y = center.y;
+
+  figma.currentPage.appendChild(text);
+  return text;
+}
+
+async function appendIconToSelection(name: string) {
+  const sel = figma.currentPage.selection[0];
+  let node: TextNode | null =
+    sel && sel.type === 'TEXT' ? (sel as TextNode) : null;
+
+  // если нет выбранного текста — создаём новый
+  if (!node) {
+    const created = await createIconText(name, ICON_REGULAR);
+    figma.currentPage.selection = [created];
+    figma.viewport.scrollAndZoomIntoView([created]);
+    return;
+  }
+
+  // грузим шрифты, уже используемые в ноде
+  await loadAllFontsIn(node);
+
+  // определяем стиль в ноде и транслируем в стиль TutuIcons
+  const hostStyle = detectStyleFromTextNode(node);
+  let desiredIconStyle = mapToIconStyle(hostStyle);
+
+  // пробуем загрузить нужное начертание; если нет — откатываемся к Regular
+  try {
+    await loadIconFont(desiredIconStyle);
+  } catch {
+    desiredIconStyle = ICON_REGULAR;
+    await loadIconFont(desiredIconStyle);
+  }
+
+  // вставляем и применяем шрифт к вставленному диапазону
+  const start = node.characters.length;
+  node.insertCharacters(start, name);
+  node.setRangeFontName(start, start + name.length, {
+    family: ICON_FONT_FAMILY,
+    style: desiredIconStyle,
+  });
+}
+
+// ===== Messages from UI =====
+figma.ui.onmessage = async (msg: UiToPlugin) => {
+  if (msg.type === 'ui-ready') {
+    // Можно сделать что-то по готовности UI (не обязательно)
+    return;
+  }
   if (msg.type === 'insert-icon-append') {
-    let node = figma.currentPage.selection[0] as TextNode | null;
-    let insertAt = 0;
-
-    // Если выбран текстовый слой, используем его, иначе создаем новый
-    if (node && node.type === 'TEXT') {
-      // Получаем позицию курсора, если есть выделение
-      try {
-        // Проверяем, есть ли выделение в текстовом узле
-        const hasSelection = 'selectionStart' in node && 'selectionEnd' in node;
-        
-        if (hasSelection) {
-          const textNode = node as any;
-          // Если есть выделение, используем его конец как позицию вставки
-          insertAt = textNode.selectionEnd || node.characters.length;
-        } else {
-          // Если нет выделения, вставляем в конец текста
-          insertAt = node.characters.length;
-        }
-      } catch (e) {
-        console.warn('Не удалось определить позицию курсора:', e);
-        // В случае ошибки вставляем в конец текста
-        insertAt = node.characters.length;
-      }
-    } else {
-      // Создаем новый текстовый слой
-      node = figma.createText();
-      node.x = figma.viewport.center.x;
-      node.y = figma.viewport.center.y;
-      
-      // Устанавливаем начальный шрифт
-      await loadFonts();
-      node.fontName = { family: FONT_FAMILY, style: FONT_STYLE };
-      node.characters = '';
-      
-      // Добавляем на текущую страницу
-      figma.currentPage.appendChild(node);
-      figma.currentPage.selection = [node];
-    }
-
-    try {
-      // Загружаем текущий шрифт, если есть текст
-      if (node.characters.length > 0 && node.fontName !== figma.mixed) {
-        await figma.loadFontAsync(node.fontName as FontName);
-      } else {
-        // Если текста нет, используем шрифт иконок
-        await loadFonts();
-        node.fontName = { family: FONT_FAMILY, style: FONT_STYLE };
-      }
-
-      // Вставляем иконку
-      node.insertCharacters(insertAt, msg.name);
-
-      // Назначаем шрифт только что вставленной иконке
-      node.setRangeFontName(insertAt, insertAt + msg.name.length, {
-        family: FONT_FAMILY,
-        style: FONT_STYLE
-      });
-    } catch (err) {
-      console.error("Ошибка вставки иконки:", err);
-      figma.notify("Не удалось вставить иконку: " + (err as Error).message);
-    }
+    await appendIconToSelection(msg.name);
+    return;
+  }
+  if (msg.type === 'open-url') {
+    figma.openExternal(msg.url);
+    return;
   }
 };

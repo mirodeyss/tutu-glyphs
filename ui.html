@@ -1,250 +1,219 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Tutu Glyphs</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap');
+    * {
+      font-family: inherit;
+    }
+
     @font-face {
       font-family: "TutuIcons";
       src: url("TutuIcons-regular.ttf") format("truetype");
+      font-display: block;
     }
-
+    @font-face {
+      font-family: "TutuIcons";
+      src: url("TutuIcons-bold.ttf") format("truetype");
+      font-display: block;
+    }
     :root {
-      --bg: #FFFFFF;
-      --card-bg: #F8F8F8;
-      --border: #b4b4b4;
-      --text: #000000;
-      --text-subtle: #727272;
-      --icon: #000000;
-      --highlight: #715EFE;
-      --radius: 16px;
+      --violet: #7D71FF;
+      --text: #0B0B0B;
+      --muted: #6B7280;
+      --surface: #FFFFFF;
+      --card: #FFFFFF;
+      --card-muted: #F3F4F6;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
     }
 
     body {
-      margin: 0;
-      font-family: sans-serif;
-      background: var(--bg);
-      padding: 0px;
-      color: var(--text);
-      overflow-x: hidden;
+      font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+#pluginContent { height: 100vh; display: none; }
+.app { height: 100%; }
 
-    .welcome {
+    /* ===== Welcome overlay ===== */
+    .welcome { position: fixed; inset: 0; background: url("data:image/png;base64,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AQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACCUAAKEEACCUAACEEgCAUAIAEEoAAEIJAEAoAQAIJQAAoQQAIJQAAIQSAIBQAgAQSgAAQgkAQCgBAAglAAChBAAglAAAhBIAgFACABBKAABCCQBAKAEACPU39EgssKSl3IsAAAAASUVORK5CYII=") center/cover no-repeat; z-index: 1000; display: flex; justify-content: center; align-items: center; background-color: transparent; }
+.welcome-body {
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+.h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.sub {
+  font-size: 14px;
+  margin-bottom: 32px;
+  line-height: 1.4;
+}
+.btn {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  background: #715EFE;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+.btn-muted {
+  background: #eee;
+  border: none;
+  border-radius: 6px;
+}
+
+    /* ===== App content ===== */
+    #pluginContent { 
+      display: none; /* Скрываем по умолчанию */
+      overflow: hidden;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    html, body, #pluginContent {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .app {
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-      padding: 0px;
-      background: linear-gradient(145deg, #f9f9ff, #ffffff);
+      background: #7D71FF;
+      margin: 0 auto;
+      max-width: 400px;
+      position: relative;
     }
 
-    .welcome h1 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 12px;
+    .header {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
     }
-
-    .welcome ul {
-      text-align: left;
-      margin: 0;
-      padding-left: 0;
-      list-style: none;
-      font-size: 14px;
-      color: var(--text-subtle);
-      margin-bottom: 24px;
-    }
-
-    .welcome ul li {
-      margin-bottom: 10px;
-    }
-
-    .welcome a.video-link {
-      color: var(--highlight);
-      text-decoration: none;
-      font-weight: 500;
-      margin-bottom: 24px;
-    }
-
-    .welcome a.video-link:hover {
-      text-decoration: underline;
-    }
-
-    .welcome button {
-      padding: 10px 20px;
-      font-size: 14px;
-      background-color: var(--highlight);
+    
+    .plugin-title {
       color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    .welcome button:hover {
-      background-color: #7D71FF;
-    }
-
-    #pluginContent {
-      display: none;
-      padding: 12px;
-    }
-
-
-    h3 {
-      margin-bottom: 12px;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 600;
+      margin: 0;
+      line-height: 1.2;
     }
 
+    .search { position: relative; }
+    .input {
+      width: 100%; height: 40px;
+      border-radius: 14px;
+      border: 1px solid #f0f0f0;
+      background: #fff;
+      font-size: 14px; line-height: 20px;
+      padding: 0 36px 0 30px;
+      outline: none; box-sizing: border-box;
+    }
+    .input::placeholder { color: #9CA3AF; }
+    .search::before {
+      content: '';
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px;
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z' stroke='%239CA3AF' stroke-width='1.5'/%3E%3Cpath d='M14 14L11.1 11.1' stroke='%239CA3AF' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+    }
+    .clear-button {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #D1D5DB; color: #fff; border: 0; display: none;
+      align-items: center; justify-content: center; cursor: pointer;
+    }
+    .clear-button:before { content: '×'; font-size: 16px; line-height: 1; margin-top: -1px; }
+
+    .grid { 
+      height: calc(100% - 56px); /* Subtract header height */
+      overflow-y: auto; 
+      padding: 16px; 
+      background: #fff; 
+      border-top-left-radius: 20px; 
+      border-top-right-radius: 20px;
+      box-sizing: border-box;
+      -webkit-overflow-scrolling: touch;
+    }
     .category-label {
       font-size: 14px;
       font-weight: 500;
-      margin-top: 24px;
-      margin-bottom: 8px;
-      color: var(--text-subtle);
+      color: #4B5563;
+      margin: 10px 0 12px 0;
+      padding-bottom: 4px;
     }
-
-    .input-wrapper {
-      position: relative;
-      width: 100%;
+    .icon-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); 
+      gap: 8px;
       margin-bottom: 16px;
     }
-    
-    input[type="text"].input.has-value {
-      color: var(--text);
-    }
-    
-    input[type="text"].input {
-      color: var(--text-subtle);
-      width: 100%;
-      height: 40px;
-      padding: 0 36px 0 16px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background-color: var(--card-bg);
-      font-size: 14px;
-      line-height: 20px;
-      box-sizing: border-box;
-      outline: none;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-
-input[type="text"].input:focus {
-  border: 2px solid var(--highlight);
-  color: var(--text);
-}
-
-.clear-button {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--border);
-  border: none;
-  padding: 0;
-  margin: 0;
-  display: none; /* Скрываем по умолчанию */
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0.8;
-  transition: all 0.15s ease;
-}
-
-
-.clear-button::before {
-  content: '×';
-  display: block;
-  color: white;
-  font-size: 16px;
-  line-height: 1;
-  margin-top: -1px;
-}
-
-
-
-    .icon-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
-      gap: 8px;
-    }
-
     .icon-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
-      border-radius: var(--radius);
-      background: var(--card-bg);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 9px;
-      color: var(--text);
+      display: grid; justify-items: center; align-content: center; gap: 6px;
+      padding: 10px; border-radius: var(--radius-lg);
+      background: #F9FAFB; cursor: pointer; transition: background .15s ease, transform .05s ease;
+      text-align: center; user-select: none;
     }
+    .icon-button:hover { background: #F3F4F6; }
+    .icon-button:active { transform: translateY(1px); }
 
-    .icon-button:hover {
-      /* border: 2px solid var(--highlight); */
-      background-color: #F0F0F0;
-    }
-    .icon-preview {
-      font-family: "TutuIcons";
-      font-size: 18px;
-      margin-bottom: 4px;
-      color: var(--icon);
-    }
-
-    .no-results {
-      text-align: center;
-      color: var(--text-subtle);
-      font-size: 14px;
-      margin-top: 24px;
-    }
-
+    .icon-preview { font-family: "TutuIcons", sans-serif !important; font-size: 24px; line-height: 1; }
+    .icon-label { font-size: 10px; color: #111827; word-break: break-all; }
+    .no-results { text-align: center; color: #6B7280; font-size: 14px; margin-top: 24px; display: none; }
   </style>
 </head>
 <body>
-    <div class="welcome" id="welcomeScreen">
-        <h1>Добро пожаловать в Tutu Glyphs</h1>
-        <ul>
-          <li>✨ Быстрый выбор нужной иконки</li>
-          <li>🔍 Поиск по названию</li>
-          <li>📁 Разделение по категориям</li>
-        </ul>
-        <a href="#" target="_blank" class="video-link">▶ Смотреть видео-инструкцию</a>
-        <button onclick="hideWelcome()">Начать работу</button>
-      </div>
-
-      <div id="pluginContent">
-    <h3>Выберите иконку</h3>
-    <div class="input-wrapper">
-        <input
-          type="text"
-          class="input"
-          id="search"
-          placeholder="Поиск иконки..."
-          oninput="toggleClearButton(this); filterIcons()"
-          style="padding-right: 40px;"
-        />
-        <button
-          class="clear-button"
-          onclick="clearInput()"
-          id="clearButton"
-          style="display: none"
-          aria-label="Очистить"
-          type="button"
-        ></button>
-      </div>
-      
-
+  <!-- Welcome -->
+  <div id="welcomeScreen" class="welcome">
+    <div class="welcome-body">
+      <h1 class="h1">Welcome<br/>to Tutu Glyphs</h1>
+      <p class="sub">Use font icons easily and quickly.<br/>Start using icons in your designs.</p>
+      <button id="startButton" class="btn btn-primary">Get Started</button>
+      <button id="videoButton" class="btn btn-muted">Video guide</button>
+      <button id="docsButton"  class="btn btn-muted">Documentation</button>
+    </div>
+  </div> 
   
-    <div class="category-label">Notification & Info</div>
+  <!-- App -->
+  <div id="pluginContent" style="height: 100%; overflow: hidden;">
+    <div class="app">
+      <div class="header">
+        <h1 class="plugin-title">Tutu Glyphs</h1>
+        <div class="search">
+          <input id="search" class="input" type="text" placeholder="Search icons…"/>
+          <button id="clearButton" class="clear-button" type="button" aria-label="Clear"></button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="category-label">Notification & Info</div>
     <div class="icon-grid" id="group1">
       <div class="icon-button" data-name="alarm_outline" onclick="insertIcon(this, 'alarm_outline')">
         <div class="icon-preview">alarm_outline</div>
@@ -403,164 +372,92 @@ input[type="text"].input:focus {
   </div>
 </div>
 
-  <!-- Секция недавно использованных иконок -->
-  <div class="category-label" id="recentLabel" style="display: none;">Недавно использованные</div>
-  <div class="icon-grid" id="recentIcons">
-    <!-- Сюда будут добавляться недавно использованные иконки -->
-  </div>
-
-<div class="category-label">Editing</div>
-<div class="icon-grid" id="editing">
-  <div class="icon-button" data-name="cross_outline" onclick="insertIcon(this, 'cross_outline')">
-    <div class="icon-preview">cross_outline</div>
-    <div class="icon-label">cross_outline</div>
-  </div>
-  <div class="icon-button" data-name="minus_outline" onclick="insertIcon(this, 'minus_outline')">
-    <div class="icon-preview">minus_outline</div>
-    <div class="icon-label">minus_outline</div>
-  </div>
-  <div class="icon-button" data-name="plus_outline" onclick="insertIcon(this, 'plus_outline')">
-    <div class="icon-preview">plus_outline</div>
-    <div class="icon-label">plus_outline</div>
-  </div>
-
-
-
-  <div class="no-results" id="noResults" style="display:none">
-    Ничего не найдено
-  </div>
+        <div id="noResults" class="no-results">Ничего не найдено</div>
       </div>
+    </div>
+  </div>
   <script>
-    function hideWelcome() {
-      document.getElementById("welcomeScreen").style.display = "none";
-      document.getElementById("pluginContent").style.display = "block";
-      // Инициализация кнопки очистки при первом показе
-      const searchInput = document.getElementById("search");
-      if (searchInput) {
-        toggleClearButton(searchInput);
+    (function () {
+      // --- показать контент, спрятать welcome ---
+      function showApp() {
+        var welcome = document.getElementById('welcomeScreen');
+        var app = document.getElementById('pluginContent');
+        if (welcome) welcome.style.display = 'none';
+        if (app) app.style.display = 'block';
+        var s = document.getElementById('search');
+        if (s) s.focus();
       }
-    }
-
-
-    function clearInput() {
-  const input = document.getElementById("search");
-  if (!input) return;
-  
-  input.value = "";
-  input.classList.remove("has-value");
-  input.focus();
-  
-  // Вызываем событие input, чтобы обновить отфильтрованные иконки
-  const event = new Event('input', {
-    bubbles: true,
-    cancelable: true,
-  });
-  input.dispatchEvent(event);
-  
-  // Обновляем видимость кнопки очистки
-  toggleClearButton(input);
-}
-
-
-function toggleClearButton(input) {
-  if (!input) return;
-  
-  const clearBtn = document.getElementById("clearButton");
-  if (!clearBtn) return;
-  
-  // Показываем кнопку только если есть текст И инпут в фокусе
-  if (input.value && input.value.length > 0 && document.activeElement === input) {
-    clearBtn.style.display = "flex";
-  } else {
-    clearBtn.style.display = "none";
-  }
-}
-
-// Добавляем обработчик потери фокуса с инпута
-document.addEventListener('DOMContentLoaded', function() {
-  const searchInput = document.getElementById("search");
-  const clearBtn = document.getElementById("clearButton");
-  
-  if (searchInput && clearBtn) {
-    // Обработчик потери фокуса
-    searchInput.addEventListener('blur', function() {
-      // Не скрываем сразу, чтобы кнопка оставалась видимой при клике на неё
-      setTimeout(() => {
-        if (document.activeElement !== clearBtn) {
-          clearBtn.style.display = "none";
+    
+      // --- вставка иконки: вызывается из onclick="insertIcon(this,'...')" ---
+      function insertIcon(el, baseName) {
+        var iconName = (el && el.getAttribute('data-name')) || baseName || '';
+        if (!iconName) return;
+        // если имени не хватает суффикса, добавим outline; логотипы и пр. без суффиксов не трогаем
+        var name = /_(outline|filled)$/.test(iconName) ? iconName : iconName;
+        // отправляем в плагин (code.ts), там у тебя стоит figma.ui.onmessage
+        parent.postMessage({ pluginMessage: { type: 'insert-icon-append', name: name } }, '*');
+      }
+    
+      // --- фильтр по названию (data-name) ---
+      function filterIcons() {
+        var input = document.getElementById('search');
+        var q = ((input && input.value) || '').toLowerCase();
+        var items = document.querySelectorAll('.icon-button');
+        var visible = 0;
+        items.forEach(function (item) {
+          var n = (item.dataset && item.dataset.name || '').toLowerCase();
+          var show = n.indexOf(q) !== -1;
+          item.style.display = show ? 'grid' : 'none';
+          if (show) visible++;
+        });
+        var empty = document.getElementById('noResults');
+        if (empty) empty.style.display = visible === 0 ? 'block' : 'none';
+      }
+    
+      // --- кнопка очистки в инпуте ---
+      function toggleClearButton() {
+        var input = document.getElementById('search');
+        var btn = document.getElementById('clearButton');
+        if (!input || !btn) return;
+        btn.style.display = (document.activeElement === input && input.value.trim().length) ? 'flex' : 'none';
+      }
+      function clearInput() {
+        var input = document.getElementById('search');
+        if (!input) return;
+        input.value = '';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.focus();
+        toggleClearButton();
+      }
+    
+      // --- init ---
+      document.addEventListener('DOMContentLoaded', function () {
+        // старт
+        var startButton = document.getElementById('startButton');
+        if (startButton) startButton.addEventListener('click', showApp);
+    
+        // поиск
+        var search = document.getElementById('search');
+        if (search) {
+          search.addEventListener('input', function () { filterIcons(); toggleClearButton(); });
+          search.addEventListener('focus', toggleClearButton);
+          search.addEventListener('blur', function () { setTimeout(toggleClearButton, 150); });
         }
-      }, 200);
-    });
-    
-    // Обработчик фокуса
-    searchInput.addEventListener('focus', function() {
-      toggleClearButton(this);
-    });
-    
-    // Обработчик ввода текста
-    searchInput.addEventListener('input', function() {
-      toggleClearButton(this);
-    });
-    
-    // Обработчик клика по кнопке очистки
-    clearBtn.addEventListener('mousedown', function(e) {
-      e.preventDefault(); // Предотвращаем потерю фокуса с инпута
-    });
-    
-    clearBtn.addEventListener('click', function() {
-      clearInput();
-    });
-  }
-});
-
-
-    let currentStyle = 'outline';
-
-    function insertIcon(el, baseName) {
-      document.querySelectorAll('.icon-button').forEach(btn => btn.classList.remove('active'));
-      
-      // Получаем имя иконки
-      let iconName, name;
-      
-      if (el) {
-        iconName = el.getAttribute('data-name');
-        name = iconName.endsWith('_outline') || iconName.endsWith('_filled') 
-          ? iconName 
-          : `${iconName}_${currentStyle}`;
-        el.classList.add('active');
-      } else {
-        iconName = baseName;
-        name = `${baseName}_${currentStyle}`;
-      }
-      
-      // Отправляем сообщение о вставке иконки
-      parent.postMessage({ pluginMessage: { type: 'insert-icon-append', name } }, '*');
-    }
-
-    function filterIcons() {
-      const input = document.getElementById("search").value.toLowerCase();
-      const icons = document.querySelectorAll(".icon-button");
-      let visibleCount = 0;
-
-      icons.forEach(icon => {
-        const name = icon.dataset.name.toLowerCase();
-        const isVisible = name.includes(input);
-        icon.style.display = isVisible ? "flex" : "none";
-        if (isVisible) visibleCount++;
+        var clearBtn = document.getElementById('clearButton');
+        if (clearBtn) {
+          clearBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+          clearBtn.addEventListener('click', clearInput);
+        }
       });
-
-      document.getElementById("noResults").style.display = visibleCount === 0 ? "block" : "none";
-
-      // скрыть/показать заголовки по категориям
-      document.getElementById("label1").style.display = [...document.getElementById("group1").children].some(el => el.style.display !== "none") ? "block" : "none";
-      document.getElementById("label2").style.display = [...document.getElementById("group2").children].some(el => el.style.display !== "none") ? "block" : "none";
-    }
-
-    function setStyle(style, el) {
-      currentStyle = style;
-      document.querySelectorAll('.segment-option').forEach(btn => btn.classList.remove('active'));
-      el.classList.add('active');
-    }
-  </script>
-  </body>
+    
+      // экспортируем функции для inline-обработчиков
+      window.insertIcon = insertIcon;
+      window.filterIcons = filterIcons;
+      window.clearInput = clearInput;
+    })();
+    </script>
+    
+    
+</body>
 </html>
+

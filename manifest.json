@@ -2,12 +2,15 @@
   "name": "Tutu Glyphs",
   "id": "tutu-icon-inserter",
   "api": "1.0.0",
-  "main": "code.js",
-  "ui": "ui.html",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
   "editorType": ["figma"],
   "networkAccess": {
-    "allowedDomains": ["none"],
-    "reasoning": "No network access required"
+    "allowedDomains": [
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com"
+    ],
+    "reasoning": "UI loads Google Fonts"
   },
   "permissions": ["currentuser"]
 }
